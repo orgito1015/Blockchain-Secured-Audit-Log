@@ -1,0 +1,37 @@
+{
+  "name": "secure-auditchain",
+  "version": "1.0.0",
+  "description": "Small-scale blockchain audit log demonstrating tamper-evident secure storage (SHA-256 chain + Ed25519 signatures)",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "verify": "tsx src/cli.ts verify",
+    "add": "tsx src/cli.ts add --message \"Test event\"",
+    "print": "tsx src/cli.ts print",
+    "tamper-demo": "tsx src/cli.ts tamper-demo",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "blockchain",
+    "cybersecurity",
+    "audit-log",
+    "ed25519",
+    "integrity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "eslint": "^9.8.0",
+    "typescript": "^5.6.3",
+    "tsx": "^4.19.2",
+    "vitest": "^2.0.5"
+  }
+}
