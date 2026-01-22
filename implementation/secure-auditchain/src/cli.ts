@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { readOrInitChain, writeJsonFile, DEFAULT_CHAIN_PATH } from "./storage.js";
+import { readOrInitChain, writeJsonFile as writeJson, DEFAULT_CHAIN_PATH } from "./storage.js";
 import { Blockchain } from "./blockchain.js";
 import { initKeys, readKeys } from "./keys.js";
 import { readFile, writeFile } from "node:fs/promises";
+import { ChainFile } from "./types.js";
 
 const program = new Command();
 program
@@ -48,7 +49,7 @@ program
       keys
     );
 
-    await writeJsonFile(DEFAULT_CHAIN_PATH, bc.toJSON());
+    await writeJson(DEFAULT_CHAIN_PATH, bc.toJSON());
     console.log(`✅ Added block #${block.index} hash=${block.hash.slice(0, 16)}...`);
   });
 
@@ -89,7 +90,7 @@ program
     }
 
     // reset chain
-    await writeJsonFile(DEFAULT_CHAIN_PATH, { version: 1, createdAt: new Date().toISOString(), chain: [] });
+    await writeJson(DEFAULT_CHAIN_PATH, { version: 1, createdAt: new Date().toISOString(), chain: [] });
 
     // add a few events
     const add = async (type: string, actor: string, message: string, meta?: Record<string, unknown>) => {
@@ -105,7 +106,7 @@ program
 
     // tamper with chain.json on disk
     const raw = await readFile(DEFAULT_CHAIN_PATH, "utf-8");
-    const obj = JSON.parse(raw) as any;
+    const obj = JSON.parse(raw) as ChainFile;
     if (!obj.chain?.length) {
       console.error("Unexpected: empty chain");
       process.exitCode = 1;
@@ -120,10 +121,5 @@ program
     // verify fail
     await program.parseAsync(["node", "cli", "verify"], { from: "user" });
   });
-
-// helper for writing json (used in tamper-demo reset)
-async function writeJsonFile(path: string, data: unknown): Promise<void> {
-  await writeFile(path, JSON.stringify(data, null, 2) + "\n", "utf-8");
-}
 
 program.parseAsync(process.argv);

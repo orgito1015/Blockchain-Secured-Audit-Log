@@ -13,6 +13,7 @@ describe("Blockchain", () => {
     expect(bc.verify()).toEqual({ ok: true });
 
     // tamper: change event message without rehashing/signing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (bc.chain[1] as any).event.message = "TAMPERED";
     const res = bc.verify();
     expect(res.ok).toBe(false);
