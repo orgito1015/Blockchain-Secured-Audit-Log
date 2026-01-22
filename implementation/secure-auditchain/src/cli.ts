@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { readOrInitChain, writeJsonFile, DEFAULT_CHAIN_PATH } from "./storage.js";
+import { readOrInitChain, writeJsonFile as writeJson, DEFAULT_CHAIN_PATH } from "./storage.js";
 import { Blockchain } from "./blockchain.js";
 import { initKeys, readKeys } from "./keys.js";
 import { readFile, writeFile } from "node:fs/promises";
+import { ChainFile } from "./types.js";
 
 const program = new Command();
 program
@@ -48,7 +49,7 @@ program
       keys
     );
 
-    await writeJsonFile(DEFAULT_CHAIN_PATH, bc.toJSON());
+    await writeJson(DEFAULT_CHAIN_PATH, bc.toJSON());
     console.log(`✅ Added block #${block.index} hash=${block.hash.slice(0, 16)}...`);
   });
 
@@ -82,30 +83,38 @@ program
   .description("Run a demo that adds events, verifies OK, then tampers with disk file and verifies FAIL")
   .action(async () => {
     // ensure keys exist; if not, create
+    let keys;
     try {
-      await readKeys();
+      keys = await readKeys();
     } catch {
-      await initKeys();
+      keys = await initKeys();
+      console.log("✅ Generated new keys for demo");
     }
 
     // reset chain
-    await writeJsonFile(DEFAULT_CHAIN_PATH, { version: 1, createdAt: new Date().toISOString(), chain: [] });
+    const emptyChainFile: ChainFile = { version: 1, createdAt: new Date().toISOString(), chain: [] };
+    await writeJson(DEFAULT_CHAIN_PATH, emptyChainFile);
+    console.log("🔄 Reset chain");
 
     // add a few events
-    const add = async (type: string, actor: string, message: string, meta?: Record<string, unknown>) => {
-      await program.parseAsync(["node", "cli", "add", "--type", type, "--actor", actor, "--message", message, ...(meta ? ["--meta", JSON.stringify(meta)] : [])], { from: "user" });
-    };
-
-    await add("LOGIN_FAIL", "alice", "Bad password", { ip: "1.2.3.4" });
-    await add("ROLE_CHANGED", "bob", "Granted admin role", { by: "secops" });
-    await add("FILE_HASH", "system", "nginx.conf updated", { file: "/etc/nginx/nginx.conf", sha256: "deadbeef" });
+    const bc = new Blockchain(emptyChainFile);
+    bc.addBlock({ type: "LOGIN_FAIL", actor: "alice", message: "Bad password", meta: { ip: "1.2.3.4" } }, keys);
+    bc.addBlock({ type: "ROLE_CHANGED", actor: "bob", message: "Granted admin role", meta: { by: "secops" } }, keys);
+    bc.addBlock({ type: "FILE_HASH", actor: "system", message: "nginx.conf updated", meta: { file: "/etc/nginx/nginx.conf", sha256: "deadbeef" } }, keys);
+    await writeJson(DEFAULT_CHAIN_PATH, bc.toJSON());
+    console.log("✅ Added 3 blocks");
 
     // verify ok
-    await program.parseAsync(["node", "cli", "verify"], { from: "user" });
+    const verifyResult1 = bc.verify();
+    if (verifyResult1.ok) {
+      console.log("✅ Initial verification: Chain is VALID");
+    } else {
+      console.log("❌ Unexpected: Initial verification failed");
+      return;
+    }
 
     // tamper with chain.json on disk
-    const raw = await readFile(DEFAULT_CHAIN_PATH, "utf-8");
-    const obj = JSON.parse(raw) as any;
+    const obj = bc.toJSON();
     if (!obj.chain?.length) {
       console.error("Unexpected: empty chain");
       process.exitCode = 1;
@@ -118,12 +127,16 @@ program
     console.log("🛑 Tampered with data/chain.json (modified block #1 message).");
 
     // verify fail
-    await program.parseAsync(["node", "cli", "verify"], { from: "user" });
+    const tamperedChainFile = await readOrInitChain(DEFAULT_CHAIN_PATH);
+    const bcTampered = new Blockchain(tamperedChainFile);
+    const verifyResult2 = bcTampered.verify();
+    if (verifyResult2.ok) {
+      console.log("❌ Unexpected: Verification passed after tampering");
+    } else {
+      console.log("❌ Tampered chain verification: Chain is INVALID");
+      console.log(`   First failure at block #${verifyResult2.at}: ${verifyResult2.reason}`);
+      console.log("✅ Demo complete: Tampering was successfully detected!");
+    }
   });
-
-// helper for writing json (used in tamper-demo reset)
-async function writeJsonFile(path: string, data: unknown): Promise<void> {
-  await writeFile(path, JSON.stringify(data, null, 2) + "\n", "utf-8");
-}
 
 program.parseAsync(process.argv);
