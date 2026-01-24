@@ -7,7 +7,7 @@ A comprehensive research and implementation project demonstrating the applicatio
 
 **Blockchain in Cybersecurity: Research and Implementation of a Small-Scale Blockchain System for Secure Data Storage**
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Project Structure](#project-structure)
@@ -19,7 +19,7 @@ A comprehensive research and implementation project demonstrating the applicatio
 - [Contributing](#contributing)
 - [License](#license)
 
-## 🔍 Overview
+##  Overview
 
 This repository contains both academic research and a working implementation exploring how blockchain principles can enhance cybersecurity data storage. Traditional centralized logging systems are vulnerable to tampering, deletion, and unauthorized modification. This project demonstrates how cryptographic techniques can provide:
 
@@ -28,7 +28,7 @@ This repository contains both academic research and a working implementation exp
 - **Auditability**: Transparent verification of entire log history
 - **Non-repudiation**: Cryptographic signatures prevent denial of actions
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 ├── research/           # Academic research paper
@@ -59,7 +59,7 @@ Production-ready TypeScript implementation featuring:
 - Comprehensive test suite
 - Attack simulation and verification tools
 
-## ✨ Features
+##  Features
 
 ### Core Capabilities
 
@@ -72,13 +72,13 @@ Production-ready TypeScript implementation featuring:
 
 ### Security Properties
 
-✅ Detects unauthorized modifications  
-✅ Prevents silent data deletion  
-✅ Identifies reordering attacks  
-✅ Validates cryptographic signatures  
-✅ Ensures data integrity across the chain  
+ Detects unauthorized modifications  
+ Prevents silent data deletion  
+ Identifies reordering attacks  
+ Validates cryptographic signatures  
+ Ensures data integrity across the chain  
 
-## 🔧 Key Technologies
+##  Key Technologies
 
 - **Node.js** - Runtime environment
 - **TypeScript** - Type-safe development
@@ -87,7 +87,7 @@ Production-ready TypeScript implementation featuring:
 - **Vitest** - Testing framework
 - **ESLint** - Code quality
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -134,7 +134,7 @@ Production-ready TypeScript implementation featuring:
 
 For detailed usage instructions, see [implementation/secure-auditchain/README.md](implementation/secure-auditchain/README.md)
 
-## 💡 Use Cases
+##  Use Cases
 
 ### Cybersecurity Applications
 
@@ -162,7 +162,7 @@ npm run dev -- add --type ROLE_CHANGE --actor "admin" --message "Granted admin r
 npm run dev -- add --type FILE_CHANGE --actor "system" --message "Critical config modified" --meta '{"file":"/etc/nginx/nginx.conf","hash":"abc123..."}'
 ```
 
-## 📚 Research Paper
+##  Research Paper
 
 The academic research paper explores:
 
@@ -177,7 +177,7 @@ The academic research paper explores:
 
 Read the full paper: [research/paper.md](research/paper.md)
 
-## 🧪 Development
+##  Development
 
 ### Running Tests
 
@@ -198,7 +198,7 @@ npm run build
 npm run lint
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on:
 
@@ -207,11 +207,11 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 - Testing requirements
 - Pull request process
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](implementation/secure-auditchain/LICENSE) file for details.
 
-## 🔒 Security Considerations
+##  Security Considerations
 
 ### What This Protects Against
 
@@ -234,7 +234,7 @@ This project is licensed under the MIT License - see the [LICENSE](implementatio
 - Integrate with existing SIEM systems
 - Regular backup and disaster recovery procedures
 
-## 📊 Project Status
+##  Project Status
 
 - [x] Research paper completed
 - [x] Core blockchain implementation
@@ -247,7 +247,7 @@ This project is licensed under the MIT License - see the [LICENSE](implementatio
 - [ ] Merkle tree optimization (future work)
 - [ ] Web interface (future work)
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - NIST Digital Signature Standards
 - Node.js Crypto Module
